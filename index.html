@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>aaa</title>
+    <title>haha</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
@@ -113,14 +113,14 @@
       <section id="splash-screen" class="panel splash-screen">
         <div class="splash-card">
           <p class="kicker">Training Scenario</p>
-          <h1 id="scenario-title">aaa</h1>
+          <h1 id="scenario-title">haha</h1>
           <button id="begin-btn" class="primary-btn">Begin</button>
         </div>
       </section>
       <section id="chat-screen" class="panel chat-screen hidden" aria-label="Scenario chat">
         <header class="chat-header">
           <div>
-            <p id="channel-name" class="channel-name">aaa</p>
+            <p id="channel-name" class="channel-name">haha</p>
           </div>
           <button id="restart-btn" class="ghost-btn" type="button">Restart</button>
         </header>
@@ -155,35 +155,39 @@
       "messages": [
         {
           "from": "user",
-          "text": "ds"
+          "text": "im scam"
+        }
+      ],
+      "options": [
+        {
+          "id": "option-0-0",
+          "label": "get",
+          "feedback": "",
+          "correct": true,
+          "next": "node-1"
         },
+        {
+          "id": "option-0-1",
+          "label": "no get",
+          "feedback": "asdasd",
+          "correct": false,
+          "next": "node-1"
+        }
+      ]
+    },
+    "node-1": {
+      "messages": [
         {
           "from": "you",
-          "text": "aasd"
-        },
-        {
-          "from": "system",
-          "text": "asdd"
-        },
-        {
-          "from": "system",
-          "text": "asd"
+          "text": "no"
         },
         {
           "from": "user",
-          "text": "asd"
+          "text": "ok sure"
         },
         {
-          "from": "user",
-          "text": "asd"
-        },
-        {
-          "from": "you",
-          "text": "asd"
-        },
-        {
-          "from": "you",
-          "text": "asd"
+          "from": "system",
+          "text": "you fall asleep"
         }
       ],
       "options": []
@@ -234,7 +238,7 @@
         if (from === "you") {
           wrapper.classList.add("you");
         }
-        wrapper.innerHTML = `<div class="avatar"></div><div class="bubble-wrap"><div class="meta"><span class="author"></span><span class="time">typing...</span></div><div class="bubble" aria-label="typing indicator"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>`;
+        wrapper.innerHTML = '<div class="avatar"></div><div class="bubble-wrap"><div class="meta"><span class="author"></span><span class="time">typing...</span></div><div class="bubble" aria-label="typing indicator"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>';
         wrapper.querySelector(".author").textContent = author;
         chatLog.appendChild(wrapper);
         chatLog.scrollTop = chatLog.scrollHeight;
