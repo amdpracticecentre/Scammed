@@ -59,7 +59,7 @@
       .screen-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-end;
         gap: 0.75rem;
         padding: 0.95rem 1rem;
         border-bottom: 1px solid var(--line);
@@ -124,15 +124,8 @@
         font-weight: 700;
       }
 
-      .path {
-        display: block;
-        margin-top: 0.18rem;
-        color: var(--muted);
-        font-size: 0.85rem;
-      }
-
       .status {
-        margin: 0;
+        margin: 0.2rem 0 0;
         color: var(--muted);
         font-size: 0.95rem;
       }
@@ -166,7 +159,6 @@
     <main class="app-shell">
       <section id="listScreen" class="screen">
         <header class="screen-header">
-          <h1>Files</h1>
           <button id="reloadBtn" class="ghost-btn" type="button">Reload</button>
         </header>
         <div class="list-wrap">
@@ -209,17 +201,39 @@
           .map((line) => line.trim())
           .filter((line) => line.length > 0)
           .filter((line) => !line.startsWith("#"))
-          .map((line) => line.replace(/^\.\//, ""))
-          .map((line) => (line.includes("/") ? line : `html-outputs/${line}`))
-          .filter((line) => line.toLowerCase().endsWith(".html"))
-          .filter((line) => {
-            const key = line.toLowerCase();
+          .map(parseListLine)
+          .map((item) => normalizeItem(item))
+          .filter((item) => item.path.toLowerCase().endsWith(".html"))
+          .filter((item) => {
+            const key = item.path.toLowerCase();
             if (seen.has(key)) {
               return false;
             }
             seen.add(key);
             return true;
           });
+      }
+
+      function parseListLine(line) {
+        const separatorIndex = line.indexOf("|");
+        if (separatorIndex === -1) {
+          return { title: "", path: line };
+        }
+
+        const rawTitle = line.slice(0, separatorIndex).trim();
+        const rawPath = line.slice(separatorIndex + 1).trim();
+        return { title: rawTitle, path: rawPath };
+      }
+
+      function normalizeItem(item) {
+        const cleanPath = item.path.replace(/^\.\//, "");
+        const normalizedPath = cleanPath.includes("/") ? cleanPath : `html-outputs/${cleanPath}`;
+        const normalizedTitle = item.title || toDisplayName(normalizedPath);
+
+        return {
+          title: normalizedTitle,
+          path: normalizedPath,
+        };
       }
 
       function escapeHtml(text) {
@@ -231,9 +245,9 @@
           .replaceAll("'", "&#39;");
       }
 
-      function openViewer(path) {
-        viewerTitleEl.textContent = toDisplayName(path);
-        viewerFrameEl.src = path;
+      function openViewer(item) {
+        viewerTitleEl.textContent = item.title;
+        viewerFrameEl.src = item.path;
         listScreenEl.classList.add("hidden");
         viewerScreenEl.classList.remove("hidden");
       }
@@ -244,16 +258,16 @@
         listScreenEl.classList.remove("hidden");
       }
 
-      function renderList(paths) {
+      function renderList(items) {
         fileListEl.innerHTML = "";
 
-        paths.forEach((path) => {
+        items.forEach((item) => {
           const li = document.createElement("li");
           const btn = document.createElement("button");
           btn.type = "button";
           btn.className = "file-btn";
-          btn.innerHTML = `<span class="name">${escapeHtml(toDisplayName(path))}</span><span class="path">${escapeHtml(path)}</span>`;
-          btn.addEventListener("click", () => openViewer(path));
+          btn.innerHTML = `<span class="name">${escapeHtml(item.title)}</span>`;
+          btn.addEventListener("click", () => openViewer(item));
           li.appendChild(btn);
           fileListEl.appendChild(li);
         });
@@ -270,15 +284,15 @@
           }
 
           const rawText = await response.text();
-          const paths = parsePaths(rawText);
+          const items = parsePaths(rawText);
 
-          if (paths.length === 0) {
+          if (items.length === 0) {
             statusEl.textContent = "No valid .html entries found in html-outputs/file-list.txt.";
             return;
           }
 
-          renderList(paths);
-          statusEl.textContent = `${paths.length} file(s) available.`;
+          renderList(items);
+          statusEl.textContent = "";
         } catch (error) {
           statusEl.textContent = "Could not load html-outputs/file-list.txt.";
         }
