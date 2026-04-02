@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Practice Launcher</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-top: #ffffff;
+        --bg-mid: #fff2f8;
+        --bg-bottom: #ffdce9;
+        --line: rgba(180, 0, 71, 0.32);
+        --text: #1f0a15;
+        --muted: #603145;
+        --accent: #b40047;
+        --shadow: 0 16px 34px rgba(121, 0, 48, 0.2);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: "Barlow", sans-serif;
+        color: var(--text);
+        background: radial-gradient(circle at 12% 15%, rgba(180, 0, 71, 0.15), transparent 30%),
+          radial-gradient(circle at 87% 18%, rgba(212, 120, 157, 0.2), transparent 34%),
+          linear-gradient(160deg, var(--bg-top), var(--bg-mid) 45%, var(--bg-bottom));
+      }
+
+      .app-shell {
+        width: min(980px, calc(100vw - 2rem));
+        height: min(92vh, 900px);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(255, 239, 247, 0.97));
+        overflow: hidden;
+      }
+
+      .screen {
+        height: 100%;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .screen-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.95rem 1rem;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 248, 252, 0.95);
+      }
+
+      .screen-header h1,
+      .screen-header h2 {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(1rem, 1.5vw, 1.25rem);
+      }
+
+      .ghost-btn {
+        border: 1px solid rgba(180, 0, 71, 0.24);
+        border-radius: 999px;
+        background: rgba(180, 0, 71, 0.1);
+        color: var(--accent);
+        font: inherit;
+        font-weight: 600;
+        padding: 0.4rem 0.95rem;
+        cursor: pointer;
+      }
+
+      .ghost-btn:hover {
+        background: rgba(180, 0, 71, 0.16);
+      }
+
+      .list-wrap {
+        height: calc(100% - 62px);
+        overflow: auto;
+        padding: 0.9rem;
+      }
+
+      .file-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      .file-btn {
+        width: 100%;
+        text-align: left;
+        border: 1px solid rgba(180, 0, 71, 0.26);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.96);
+        color: var(--text);
+        padding: 0.72rem 0.82rem;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .file-btn:hover {
+        border-color: var(--accent);
+        background: rgba(255, 248, 252, 0.98);
+      }
+
+      .name {
+        display: block;
+        font-weight: 700;
+      }
+
+      .path {
+        display: block;
+        margin-top: 0.18rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .status {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .viewer {
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      iframe {
+        width: calc(100% - 1rem);
+        height: calc(100% - 1rem);
+        margin: 0.5rem;
+        border: 1px solid rgba(180, 0, 71, 0.25);
+        border-radius: 12px;
+        background: #fff;
+      }
+
+      @media (max-width: 680px) {
+        .app-shell {
+          width: 100vw;
+          height: 100vh;
+          border-radius: 0;
+          border-left: none;
+          border-right: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section id="listScreen" class="screen">
+        <header class="screen-header">
+          <h1>Files</h1>
+          <button id="reloadBtn" class="ghost-btn" type="button">Reload</button>
+        </header>
+        <div class="list-wrap">
+          <ul id="fileList" class="file-list"></ul>
+          <p id="status" class="status">Loading file list...</p>
+        </div>
+      </section>
+
+      <section id="viewerScreen" class="screen viewer hidden">
+        <header class="screen-header">
+          <button id="backBtn" class="ghost-btn" type="button">Back</button>
+          <h2 id="viewerTitle">Preview</h2>
+        </header>
+        <iframe id="viewerFrame" title="Selected HTML file" src="about:blank"></iframe>
+      </section>
+    </main>
+
+    <script>
+      const LIST_FILE = "html-outputs/file-list.txt";
+
+      const listScreenEl = document.getElementById("listScreen");
+      const viewerScreenEl = document.getElementById("viewerScreen");
+      const fileListEl = document.getElementById("fileList");
+      const statusEl = document.getElementById("status");
+      const reloadBtn = document.getElementById("reloadBtn");
+      const backBtn = document.getElementById("backBtn");
+      const viewerTitleEl = document.getElementById("viewerTitle");
+      const viewerFrameEl = document.getElementById("viewerFrame");
+
+      function toDisplayName(path) {
+        const segments = path.split("/");
+        return segments[segments.length - 1] || path;
+      }
+
+      function parsePaths(rawText) {
+        const seen = new Set();
+
+        return rawText
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line.length > 0)
+          .filter((line) => !line.startsWith("#"))
+          .map((line) => line.replace(/^\.\//, ""))
+          .map((line) => (line.includes("/") ? line : `html-outputs/${line}`))
+          .filter((line) => line.toLowerCase().endsWith(".html"))
+          .filter((line) => {
+            const key = line.toLowerCase();
+            if (seen.has(key)) {
+              return false;
+            }
+            seen.add(key);
+            return true;
+          });
+      }
+
+      function escapeHtml(text) {
+        return text
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function openViewer(path) {
+        viewerTitleEl.textContent = toDisplayName(path);
+        viewerFrameEl.src = path;
+        listScreenEl.classList.add("hidden");
+        viewerScreenEl.classList.remove("hidden");
+      }
+
+      function goBackToList() {
+        viewerFrameEl.src = "about:blank";
+        viewerScreenEl.classList.add("hidden");
+        listScreenEl.classList.remove("hidden");
+      }
+
+      function renderList(paths) {
+        fileListEl.innerHTML = "";
+
+        paths.forEach((path) => {
+          const li = document.createElement("li");
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "file-btn";
+          btn.innerHTML = `<span class="name">${escapeHtml(toDisplayName(path))}</span><span class="path">${escapeHtml(path)}</span>`;
+          btn.addEventListener("click", () => openViewer(path));
+          li.appendChild(btn);
+          fileListEl.appendChild(li);
+        });
+      }
+
+      async function loadList() {
+        statusEl.textContent = "Loading file list...";
+        fileListEl.innerHTML = "";
+
+        try {
+          const response = await fetch(LIST_FILE, { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error("File list not found");
+          }
+
+          const rawText = await response.text();
+          const paths = parsePaths(rawText);
+
+          if (paths.length === 0) {
+            statusEl.textContent = "No valid .html entries found in html-outputs/file-list.txt.";
+            return;
+          }
+
+          renderList(paths);
+          statusEl.textContent = `${paths.length} file(s) available.`;
+        } catch (error) {
+          statusEl.textContent = "Could not load html-outputs/file-list.txt.";
+        }
+      }
+
+      reloadBtn.addEventListener("click", loadList);
+      backBtn.addEventListener("click", goBackToList);
+      loadList();
+    </script>
+  </body>
+</html>
