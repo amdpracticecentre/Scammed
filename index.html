@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>haha</title>
+    <title>Scammed</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
@@ -113,14 +113,14 @@
       <section id="splash-screen" class="panel splash-screen">
         <div class="splash-card">
           <p class="kicker">Training Scenario</p>
-          <h1 id="scenario-title">haha</h1>
+          <h1 id="scenario-title">Scammed</h1>
           <button id="begin-btn" class="primary-btn">Begin</button>
         </div>
       </section>
       <section id="chat-screen" class="panel chat-screen hidden" aria-label="Scenario chat">
         <header class="chat-header">
           <div>
-            <p id="channel-name" class="channel-name">haha</p>
+            <p id="channel-name" class="channel-name">Scammed</p>
           </div>
           <button id="restart-btn" class="ghost-btn" type="button">Restart</button>
         </header>
@@ -155,21 +155,28 @@
       "messages": [
         {
           "from": "user",
-          "text": "im scam"
+          "text": "Hello! I got scammed earlier today and I really want to get my items back please"
         }
       ],
       "options": [
         {
           "id": "option-0-0",
-          "label": "get",
+          "label": "What is the username of the person who scammed you?",
+          "feedback": "Not quite! The first step when completing a ticket is to claim it to let the user who made the ticket know that it is being handled.",
+          "correct": false,
+          "next": "node-1"
+        },
+        {
+          "id": "option-0-1",
+          "label": "Claim the ticket",
           "feedback": "",
           "correct": true,
           "next": "node-1"
         },
         {
-          "id": "option-0-1",
-          "label": "no get",
-          "feedback": "asdasd",
+          "id": "option-0-2",
+          "label": "Escalate the ticket",
+          "feedback": "Escalations should only be made where regular moderators are unable to assist further.",
           "correct": false,
           "next": "node-1"
         }
@@ -178,16 +185,204 @@
     "node-1": {
       "messages": [
         {
+          "from": "system",
+          "text": "You claim the ticket"
+        },
+        {
           "from": "you",
-          "text": "no"
+          "text": "Thank you for reaching out to Discord Help!"
+        },
+        {
+          "from": "you",
+          "text": "..."
+        }
+      ],
+      "options": [
+        {
+          "id": "option-1-0",
+          "label": "Unfortunately I am unable to help",
+          "feedback": "While you may not be able to help, you should always ask further clarifying questions to make sure this is the case.",
+          "correct": false,
+          "next": "node-2"
+        },
+        {
+          "id": "option-1-1",
+          "label": "Please contact Adopt Me support",
+          "feedback": "The Adopt me Support site does not offer help with being scammed.",
+          "correct": false,
+          "next": "node-2"
+        },
+        {
+          "id": "option-1-2",
+          "label": "Did this happen on Discord, or in-game?",
+          "feedback": "",
+          "correct": true,
+          "next": "node-2"
+        }
+      ]
+    },
+    "node-2": {
+      "messages": [
+        {
+          "from": "you",
+          "text": "Would you be able to clarify whether or not this happened in-game, or if it started on Discord?"
+        },
+        {
+          "from": "you",
+          "text": "If it started on Discord, would you be able to provide the user ID or username of the user?"
         },
         {
           "from": "user",
-          "text": "ok sure"
+          "text": "yes they messaged me on dms and they said that if i joined them with a friend they would give me a rideable metal ox for free"
+        },
+        {
+          "from": "user",
+          "text": "their id is ###############"
+        },
+        {
+          "from": "you",
+          "text": "Thank you!"
+        }
+      ],
+      "options": [
+        {
+          "id": "option-2-0",
+          "label": "Ban the user",
+          "feedback": "You do not have any current evidence that proves the user they are mentioning did anything wrong.",
+          "correct": false,
+          "next": "node-3"
+        },
+        {
+          "id": "option-2-1",
+          "label": "Check message logs within the server",
+          "feedback": "",
+          "correct": true,
+          "next": "node-3"
+        },
+        {
+          "id": "option-2-2",
+          "label": "Ask for a screenshot of the DMs",
+          "feedback": "While this is important, it is always best to check for logs around the server just in case, that way you don't have to rely on the user to provide evidence that could be faked.",
+          "correct": false,
+          "next": "node-3"
+        }
+      ]
+    },
+    "node-3": {
+      "messages": [
+        {
+          "from": "system",
+          "text": "You search for messages from the user, deleted messages, and past moderations."
         },
         {
           "from": "system",
-          "text": "you fall asleep"
+          "text": "You do not find any evidence."
+        }
+      ],
+      "options": [
+        {
+          "id": "option-3-0",
+          "label": "Explain no further actions can be taken, and close the ticket",
+          "feedback": "It is always good to ask for screenshots of what the user is talking about, should you be unable to find any evidence yourself.",
+          "correct": false,
+          "next": "node-4"
+        },
+        {
+          "id": "option-3-1",
+          "label": "Ask for screenshots of their conversation",
+          "feedback": "",
+          "correct": true,
+          "next": "node-4"
+        }
+      ]
+    },
+    "node-4": {
+      "messages": [
+        {
+          "from": "system",
+          "text": "/tag evidence"
+        },
+        {
+          "from": "you",
+          "text": "DM Evidence (Required)\nWe need genuine evidence to take action. Screenshots can be easily edited, so we require full recordings to keep reports fair and accurate.\n\nIf the criteria below isn’t followed exactly, we can’t help.\n\nMust be a screen recording\nShow the full conversation (top to bottom)\nInclude usernames, profile pictures, and mutual servers\nMust be full screen, uncropped and unedited\nOpen the user's profile\nOpen the Adopt Me server, then return to the DM\n\nReporting a link?\nFollow all of the above\nAlso show where the link leads (hover on PC or long press on mobile)"
+        },
+        {
+          "from": "user",
+          "text": "Ok sure here you go"
+        },
+        {
+          "from": "system",
+          "text": "They provide sufficient evidence"
+        }
+      ],
+      "options": [
+        {
+          "id": "option-4-0",
+          "label": "Mute the user and close the ticket",
+          "feedback": "Scamming someone warrants a ban.",
+          "correct": false,
+          "next": "node-5"
+        },
+        {
+          "id": "option-4-1",
+          "label": "Ban the user and request close the ticket",
+          "feedback": "We do not request close tickets in an effort to reduce the number of open tickets. Additionally, all evidence needs to be logged",
+          "correct": false,
+          "next": "node-5"
+        },
+        {
+          "id": "option-4-2",
+          "label": "Ban the user",
+          "feedback": "",
+          "correct": true,
+          "next": "node-5"
+        }
+      ]
+    },
+    "node-5": {
+      "messages": [
+        {
+          "from": "system",
+          "text": "You ban the user"
+        },
+        {
+          "from": "system",
+          "text": "In #moderation-proof you post:"
+        }
+      ],
+      "options": [
+        {
+          "id": "option-5-0",
+          "label": "User ID and ticket number",
+          "feedback": "Lacks hard evidence in the case where the ban is appealed",
+          "correct": false,
+          "next": "node-6"
+        },
+        {
+          "id": "option-5-1",
+          "label": "User ID and Screenshots",
+          "feedback": "Lacks ticket reference in the case where the ban is appealed. Not detrimental, just makes it harder.",
+          "correct": false,
+          "next": "node-6"
+        },
+        {
+          "id": "option-5-2",
+          "label": "User ID, Ticket number, and screenshots",
+          "feedback": "",
+          "correct": true,
+          "next": "node-6"
+        }
+      ]
+    },
+    "node-6": {
+      "messages": [
+        {
+          "from": "you",
+          "text": "User ID, Ticket number, and screenshots"
+        },
+        {
+          "from": "system",
+          "text": "You close the ticket."
         }
       ],
       "options": []
@@ -210,6 +405,7 @@
         channelNameEl.textContent = scenarioTitleEl.textContent || "Scenario";
       }
       let pendingNodeToken = 0;
+      const MESSAGE_GAP_MS = 1000;
       const USER_TYPING_MS = 850;
       const YOU_TYPING_MS = 850;
       function wait(ms) { return new Promise((resolve) => window.setTimeout(resolve, ms)); }
@@ -272,8 +468,12 @@
         if (!node) return;
         const myToken = ++pendingNodeToken;
         choicesEl.innerHTML = "";
-        for (const item of node.messages || []) {
+        for (const [index, item] of (node.messages || []).entries()) {
           if (myToken !== pendingNodeToken) return;
+          if (index > 0) {
+            await wait(MESSAGE_GAP_MS);
+            if (myToken !== pendingNodeToken) return;
+          }
           const from = item.from || "user";
           const text = item.text || "";
           const isSystem = from === "system";
@@ -290,7 +490,6 @@
             typing.remove();
           }
           pushMessage({ text, from, isSystem });
-          await wait(130);
         }
         renderOptions(node);
       }
